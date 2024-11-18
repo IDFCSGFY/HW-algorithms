@@ -1,5 +1,8 @@
 package org.example.model;
 
+import org.example.exception.ElementNotFoundException;
+import org.example.exception.NullArgumentGivenException;
+
 import java.util.Arrays;
 
 public class StringListImpl implements StringList {
@@ -32,6 +35,9 @@ public class StringListImpl implements StringList {
     @Override
     public String add(String item) {
         assureExistence();
+        if (item == null) {
+            throw new NullArgumentGivenException();
+        }
         if (array.length == actualSize) {
             grow();
         }
@@ -43,29 +49,37 @@ public class StringListImpl implements StringList {
     @Override
     public String add(int index, String item) {
         assureExistence();
+        if (item == null) {
+            throw new NullArgumentGivenException();
+        }
         if (array.length == actualSize) {
             grow();
         }
-        if (index == actualSize) {
+        if (index > actualSize) {
+            throw new IndexOutOfBoundsException();
+        } else if (index == actualSize) {
             array[actualSize] = item;
             actualSize++;
-        } else if (index < actualSize) {
-            for (int i = actualSize; i > index; i--) {
-                array[i] = array[i - 1];
-            }
-            array[index] = item;
-            actualSize++;
-        } else {
-            throw new RuntimeException();
+            return item;
         }
+
+        for (int i = actualSize; i > index; i--) {
+            array[i] = array[i - 1];
+        }
+        array[index] = item;
+        actualSize++;
+
         return item;
     }
 
     @Override
     public String set(int index, String item) {
         assureExistence();
+        if (item == null) {
+            throw new NullArgumentGivenException();
+        }
         if (index >= actualSize) {
-            throw new RuntimeException();
+            throw new IndexOutOfBoundsException();
         }
         array[index] = item;
         return item;
@@ -74,6 +88,9 @@ public class StringListImpl implements StringList {
     @Override
     public String remove(String item) {
         assureExistence();
+        if (item == null) {
+            throw new NullArgumentGivenException();
+        }
         for (int i = 0; i < actualSize; i++) {
             if (array[i].equals(item)) {
                 for (int j = i; j < actualSize - 1; j++) {
@@ -83,14 +100,14 @@ public class StringListImpl implements StringList {
                 return item;
             }
         }
-        throw new RuntimeException();
+        throw new ElementNotFoundException();
     }
 
     @Override
     public String remove(int index) {
         assureExistence();
         if (index >= actualSize) {
-            throw new RuntimeException();
+            throw new IndexOutOfBoundsException();
         }
         String target = array[index];
         for (int i = index; i < actualSize - 1; i++) {
@@ -103,8 +120,11 @@ public class StringListImpl implements StringList {
     @Override
     public boolean contains(String item) {
         assureExistence();
-        for (String e : array) {
-            if (e.equals(item)) {
+        if (item == null) {
+            throw new NullArgumentGivenException();
+        }
+        for (int i = 0; i < actualSize; i++) {
+            if (array[i].equals(item)) {
                 return true;
             }
         }
@@ -114,6 +134,9 @@ public class StringListImpl implements StringList {
     @Override
     public int indexOf(String item) {
         assureExistence();
+        if (item == null) {
+            throw new NullArgumentGivenException();
+        }
         for (int i = 0; i < actualSize; i++) {
             if (array[i].equals(item)) {
                 return i;
@@ -125,6 +148,9 @@ public class StringListImpl implements StringList {
     @Override
     public int lastIndexOf(String item) {
         assureExistence();
+        if (item == null) {
+            throw new NullArgumentGivenException();
+        }
         for (int i = actualSize - 1; i >= 0; i--) {
             if (array[i].equals(item)) {
                 return i;
@@ -137,14 +163,17 @@ public class StringListImpl implements StringList {
     public String get(int index) {
         assureExistence();
         if (index >= actualSize) {
-            throw new RuntimeException();
+            throw new IndexOutOfBoundsException();
         }
         return array[index];
     }
 
     @Override
     public boolean equals(StringList otherList) {
-        return Arrays.equals(this.array, otherList.toArray());
+        if (otherList == null) {
+            throw new NullArgumentGivenException();
+        }
+        return Arrays.equals(toArray(), otherList.toArray());
     }
 
     @Override
