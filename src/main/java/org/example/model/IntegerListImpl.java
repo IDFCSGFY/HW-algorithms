@@ -129,7 +129,7 @@ public class IntegerListImpl implements IntegerList {
 //            }
 //        }
 //        return false;
-        insertionSort();
+        quickSort(array,0, actualSize - 1);
         return binarySearch(array, 0, actualSize - 1, item) != -1;
     }
 
@@ -145,7 +145,7 @@ public class IntegerListImpl implements IntegerList {
 //            }
 //        }
 //        return -1;
-        insertionSort();
+        quickSort(array, 0, actualSize - 1);
         return binarySearch(toArray(), 0, actualSize - 1, item);
     }
 
@@ -227,5 +227,36 @@ public class IntegerListImpl implements IntegerList {
         } else {
             return binarySearch(arr, observedIndex + 1, iEnd, value);
         }
+    }
+
+    public static void quickSort(Integer[] arr, int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(arr, begin, end);
+
+            quickSort(arr, begin, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, end);
+        }
+    }
+
+    private static int partition(Integer[] arr, int begin, int end) {
+        int pivot = arr[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+
+                swapElements(arr, i, j);
+            }
+        }
+
+        swapElements(arr, i + 1, end);
+        return i + 1;
+    }
+
+    private static void swapElements(Integer[] arr, int left, int right) {
+        int temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
     }
 }
